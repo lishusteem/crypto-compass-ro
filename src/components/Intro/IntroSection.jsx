@@ -3,13 +3,23 @@ import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Brain, Zap, Shield, Globe, Coins, Users, Crown, Rocket, ChevronLeft, ChevronRight } from 'lucide-react';
 import AnimatedButton from '../Shared/AnimatedButton.jsx';
+import { useApp } from '../../contexts/AppContext.jsx';
 
 const IntroSection = () => {
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(0);
+  const { startTest, loading } = useApp();
 
-  const handleStartTest = () => {
-    navigate('/test');
+  const handleStartTest = async () => {
+    try {
+      // Inițializează testul în context înainte de navigare
+      await startTest();
+      // Navighează către test doar după ce întrebările sunt încărcate
+      navigate('/test');
+    } catch (error) {
+      console.error('Eroare la inițializarea testului:', error);
+      // Poți adăuga aici o notificare de eroare pentru utilizator
+    }
   };
 
   // Cele 16 arhetipuri politice crypto
@@ -274,9 +284,10 @@ const IntroSection = () => {
           <AnimatedButton
             size="lg"
             onClick={handleStartTest}
+            disabled={loading.test}
             className="bg-gradient-to-r from-primary-accent-orange to-primary-accent-purple"
           >
-            Începe Testul
+            {loading.test ? 'Se încarcă...' : 'Începe Testul'}
           </AnimatedButton>
           
           <p className="text-sm text-primary-text-secondary">

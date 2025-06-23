@@ -188,17 +188,27 @@ export function AppProvider({ children }) {
   };
   
   // Funcții pentru gestionarea testului
-  const startTest = () => {
+  const startTest = async () => {
     try {
+      dispatch({ type: ACTION_TYPES.SET_LOADING, payload: { type: 'test', value: true } });
+      dispatch({ type: ACTION_TYPES.CLEAR_ERROR });
+      
+      // Simulăm o mică întârziere pentru a evita racing conditions
+      await new Promise(resolve => setTimeout(resolve, 100));
+      
       const questions = generateQuestionSet();
       dispatch({ type: ACTION_TYPES.SET_QUESTIONS, payload: questions });
-      dispatch({ type: ACTION_TYPES.CLEAR_ERROR });
+      
+      return true;
     } catch (error) {
       console.error('Eroare la generarea întrebărilor:', error);
       dispatch({
         type: ACTION_TYPES.SET_ERROR,
         payload: 'Eroare la începerea testului. Te rugăm să încerci din nou.',
       });
+      throw error;
+    } finally {
+      dispatch({ type: ACTION_TYPES.SET_LOADING, payload: { type: 'test', value: false } });
     }
   };
   
