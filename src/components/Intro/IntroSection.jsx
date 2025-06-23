@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Brain, Zap, Shield, Globe, Coins, Users, Crown, Rocket, ChevronLeft, ChevronRight } from 'lucide-react';
@@ -9,6 +9,7 @@ const IntroSection = () => {
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(0);
   const { startTest, loading } = useApp();
+  const intervalRef = useRef(null);
 
   const handleStartTest = async () => {
     try {
@@ -154,24 +155,43 @@ const IntroSection = () => {
     }
   ];
 
-  // Auto-cycle carousel every 5 seconds
-  useEffect(() => {
-    const interval = setInterval(() => {
+  // Funcție pentru începerea/reînceperea timer-ului automat
+  const startAutoTimer = useCallback(() => {
+    // Oprește timer-ul existent dacă există
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+    }
+    
+    // Începe un nou timer
+    intervalRef.current = setInterval(() => {
       setCurrentPage((prev) => (prev + 1) % Math.ceil(archetypes.length / 4));
     }, 5000);
-
-    return () => clearInterval(interval);
   }, [archetypes.length]);
+
+  // Auto-cycle carousel every 5 seconds
+  useEffect(() => {
+    startAutoTimer();
+    
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    };
+  }, [startAutoTimer]);
 
   const totalPages = Math.ceil(archetypes.length / 4);
   const currentArchetypes = archetypes.slice(currentPage * 4, (currentPage + 1) * 4);
 
   const nextPage = () => {
     setCurrentPage((prev) => (prev + 1) % totalPages);
+    // Resetează timer-ul automat după navigarea manuală
+    startAutoTimer();
   };
 
   const prevPage = () => {
     setCurrentPage((prev) => (prev - 1 + totalPages) % totalPages);
+    // Resetează timer-ul automat după navigarea manuală
+    startAutoTimer();
   };
 
   return (
