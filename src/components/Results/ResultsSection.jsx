@@ -7,6 +7,7 @@ import html2canvas from 'html2canvas';
 import { useApp } from '../../contexts/AppContext.jsx';
 import { useWallet } from '../../hooks/useWallet.js';
 import CompassVisualization from './CompassVisualization.jsx';
+import NFTMintingButton from './NFTMintingButton.jsx';
 import AnimatedButton from '../Shared/AnimatedButton.jsx';
 import GlowCard from '../Shared/GlowCard.jsx';
 import { getArchetypeFromScores } from '../../utils/constants.js';
@@ -107,10 +108,6 @@ const ResultsSection = () => {
 
   // Handler pentru mint NFT
   const handleMintNFT = () => {
-    if (!isConnected) {
-      connectWallet();
-      return;
-    }
     setShowNFTMint(true);
   };
 
@@ -353,7 +350,7 @@ const ResultsSection = () => {
               size="lg"
               className="bg-gradient-to-r from-primary-accent-orange to-primary-accent-purple"
             >
-              {isConnected ? 'Mint ca NFT' : 'Conectează Wallet pentru NFT'}
+              💎 Mint ca NFT
             </AnimatedButton>
 
             {/* Restart Test Button */}
@@ -368,49 +365,17 @@ const ResultsSection = () => {
           </motion.div>
 
           {/* NFT Minting Section */}
-          {showNFTMint && isConnected && (
+          {showNFTMint && (
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
               className="mb-12"
             >
-              <GlowCard className="p-8 text-center" glowColor="purple">
-                <div className="space-y-6">
-                  <h3 className="text-2xl font-bold text-primary-text-primary">
-                    Mint Rezultatul ca NFT
-                  </h3>
-                  
-                  <p className="text-primary-text-secondary max-w-2xl mx-auto">
-                    Transformă rezultatul tău în NFT pe rețeaua Base Sepolia. 
-                    Vei plăti doar gas-ul pentru tranzacție.
-                  </p>
-                  
-                  <div className="inline-flex items-center px-4 py-2 bg-primary-secondary rounded-lg">
-                    <span className="text-sm text-primary-text-secondary">
-                      Wallet conectat: {account?.slice(0, 6)}...{account?.slice(-4)}
-                    </span>
-                  </div>
-                  
-                  <div className="flex justify-center gap-4">
-                    <AnimatedButton
-                      variant="primary"
-                      size="lg"
-                      className="bg-gradient-to-r from-primary-accent-purple to-primary-accent-blue"
-                    >
-                      Confirmă Mint NFT
-                    </AnimatedButton>
-                    
-                    <AnimatedButton
-                      onClick={() => setShowNFTMint(false)}
-                      variant="outline"
-                      size="lg"
-                    >
-                      Anulează
-                    </AnimatedButton>
-                  </div>
-                </div>
-              </GlowCard>
+              <NFTMintingButton 
+                results={results} 
+                archetype={archetype}
+              />
             </motion.div>
           )}
 
