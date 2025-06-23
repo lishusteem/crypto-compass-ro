@@ -160,18 +160,29 @@ export const switchToBaseSepolia = async () => {
  */
 export const estimateMintingCost = async (results, archetype, userAddress) => {
   try {
+    console.log('estimateMintingCost - Starting with params:', { results, archetype, userAddress });
+    
     const provider = getWalletProvider();
-    const signer = provider.getSigner();
+    console.log('estimateMintingCost - Got provider:', provider);
+    
+    const signer = await provider.getSigner();
+    console.log('estimateMintingCost - Got signer:', signer);
+    
     const contract = getNFTContract(signer);
+    console.log('estimateMintingCost - Got contract:', contract);
     
     // Generate SVG for the NFT
     const svgString = generateNFTSVG(results, archetype);
+    console.log('estimateMintingCost - Generated SVG length:', svgString.length);
     
     // Estimate gas for minting
+    console.log('estimateMintingCost - Estimating gas for:', { userAddress, svgLength: svgString.length });
     const gasEstimate = await contract.mint.estimateGas(userAddress, svgString);
+    console.log('estimateMintingCost - Gas estimate:', gasEstimate.toString());
     
     // Get current gas price
     const gasPrice = await provider.getGasPrice();
+    console.log('estimateMintingCost - Gas price:', gasPrice.toString());
     
     // Calculate total cost
     const totalCost = gasEstimate * gasPrice;

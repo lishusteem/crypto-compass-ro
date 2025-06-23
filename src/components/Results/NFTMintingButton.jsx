@@ -16,7 +16,13 @@ import {
 
 const NFTMintingButton = ({ results, archetype }) => {
   const { setError, clearError } = useApp();
-  const { address, isConnected, connectWallet } = useWallet();
+  const walletState = useWallet();
+  const { address, isConnected, connectWallet } = walletState;
+  
+  // Debug logging
+  console.log('NFTMintingButton - Wallet state:', walletState);
+  console.log('NFTMintingButton - isConnected:', isConnected);
+  console.log('NFTMintingButton - address:', address);
   const [mintingState, setMintingState] = useState({
     isEstimating: false,
     isMinting: false,
@@ -30,17 +36,24 @@ const NFTMintingButton = ({ results, archetype }) => {
    * Estimates the cost of minting before proceeding
    */
   const handleEstimateCost = async () => {
+    console.log('handleEstimateCost called - isConnected:', isConnected, 'address:', address);
+    
     if (!isConnected) {
+      console.log('Not connected, showing error');
       setError('Conectează-ți wallet-ul pentru a estima costul mintării');
       return;
     }
 
+    console.log('Starting cost estimation...');
     setMintingState(prev => ({ ...prev, isEstimating: true }));
 
     try {
+      console.log('Calling estimateMintingCost with:', { results, archetype, address });
       const estimate = await estimateMintingCost(results, archetype, address);
+      console.log('Estimate result:', estimate);
       
       if (estimate.success) {
+        console.log('Estimate successful, updating state');
         setMintingState(prev => ({
           ...prev,
           costEstimate: estimate,
@@ -48,9 +61,11 @@ const NFTMintingButton = ({ results, archetype }) => {
           isEstimating: false
         }));
       } else {
+        console.log('Estimate failed:', estimate.error);
         throw new Error(estimate.error);
       }
     } catch (error) {
+      console.error('Error in handleEstimateCost:', error);
       setMintingState(prev => ({ ...prev, isEstimating: false }));
       setError(`Eroare la estimarea costului: ${error.message}`);
     }
