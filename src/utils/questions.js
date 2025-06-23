@@ -140,7 +140,7 @@ const privatePublicQuestions = [
   },
   {
     id: 'p5',
-    text: "Criptomonedele ar trebui să se concentreze în principal pe incluziunea financiară și împuternicirea socială.",
+    text: "Criptomonedele ar trebui să se concentreze în principal pe includerea financiară și împuternicirea socială.",
     direction: "public",
     dimension: "privatePublic"
   },
@@ -152,7 +152,7 @@ const privatePublicQuestions = [
   },
   {
     id: 'p7',
-    text: "Criptomonedele au potențialul de a îmbunătăți semnificativ incluziunea financiară globală.",
+    text: "Criptomonedele au potențialul de a îmbunătăți semnificativ includerea financiară globală.",
     direction: "public",
     dimension: "privatePublic"
   },

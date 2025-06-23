@@ -370,7 +370,7 @@ export const CRYPTO_ARCHETYPES = {
     mission: 'Da, profit substanțial din munca mea - este recompensa justă pentru risc și inovație. Reinvestesc agresiv în ecosistem, finanțez dezvoltatori talentați, susțin infrastructură open-source. Pentru mine, descentralizarea nu e religie ci eficiență superioară dovedibilă. Măsor succesul în protocoale autonome și comunități auto-sustenabile.'
   },
   'puternic-descentralizat-moderat-public': {
-    name: 'Visionarul Comunitar',
+          name: 'Vizionarul Comunitar',
     color: 'from-purple-500 to-green-500',
     description: 'Tehnologie pentru toți',
     philosophy: 'Descentralizarea poate crea abundență pentru toată lumea, nu doar pentru elită.',

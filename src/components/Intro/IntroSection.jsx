@@ -138,7 +138,7 @@ const IntroSection = () => {
     },
     {
       id: 'puternic-descentralizat-moderat-public',
-      name: 'Visionarul Comunitar',
+      name: 'Vizionarul Comunitar',
       icon: Globe,
       color: 'from-purple-500 to-green-500',
       description: 'Tehnologie pentru toți',
