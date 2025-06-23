@@ -165,10 +165,10 @@ const IntroSection = () => {
     // Începe un nou timer
     intervalRef.current = setInterval(() => {
       setCurrentPage((prev) => (prev + 1) % Math.ceil(archetypes.length / 4));
-    }, 5000);
+    }, 7000);
   }, [archetypes.length]);
 
-  // Auto-cycle carousel every 5 seconds
+  // Auto-cycle carousel every 7 seconds
   useEffect(() => {
     startAutoTimer();
     
