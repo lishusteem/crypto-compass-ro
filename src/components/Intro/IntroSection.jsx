@@ -291,7 +291,7 @@ const IntroSection = () => {
           </AnimatedButton>
           
           <p className="text-sm text-primary-text-secondary">
-            20 de întrebări • 5-10 minute • Rezultat NFT gratuit
+            30 de întrebări • 8-12 minute • Poți minta rezultatul ca NFT
           </p>
         </motion.div>
 
