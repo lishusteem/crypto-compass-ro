@@ -3,7 +3,7 @@
  * Handles interaction with the NFT contract for minting compass results as NFTs
  */
 
-import { ethers } from 'ethers';
+import { ethers, BrowserProvider, Contract, formatEther, formatUnits, parseUnits, toBigInt } from 'ethers';
 import { generateNFTMetadata, generateNFTSVG } from '../utils/nftSvgGenerator.js';
 
 // Contract details
@@ -74,7 +74,7 @@ const NFT_CONTRACT_ABI = [
 
 /**
  * Gets the user's connected wallet provider
- * @returns {ethers.providers.Web3Provider} The wallet provider
+ * @returns {BrowserProvider} The wallet provider
  * @throws {Error} If no wallet is connected
  */
 export const getWalletProvider = () => {
@@ -82,16 +82,16 @@ export const getWalletProvider = () => {
     throw new Error('MetaMask nu este instalat sau disponibil');
   }
   
-  return new ethers.providers.Web3Provider(window.ethereum);
+  return new BrowserProvider(window.ethereum);
 };
 
 /**
  * Gets the NFT contract instance
  * @param {ethers.Signer} signer - The wallet signer
- * @returns {ethers.Contract} The NFT contract instance
+ * @returns {Contract} The NFT contract instance
  */
 export const getNFTContract = (signer) => {
-  return new ethers.Contract(NFT_CONTRACT_ADDRESS, NFT_CONTRACT_ABI, signer);
+  return new Contract(NFT_CONTRACT_ADDRESS, NFT_CONTRACT_ABI, signer);
 };
 
 /**
@@ -168,19 +168,19 @@ export const estimateMintingCost = async (results, archetype, userAddress) => {
     const svgString = generateNFTSVG(results, archetype);
     
     // Estimate gas for minting
-    const gasEstimate = await contract.estimateGas.mint(userAddress, svgString);
+    const gasEstimate = await contract.mint.estimateGas(userAddress, svgString);
     
     // Get current gas price
     const gasPrice = await provider.getGasPrice();
     
     // Calculate total cost
-    const totalCost = gasEstimate.mul(gasPrice);
+    const totalCost = gasEstimate * gasPrice;
     
     return {
       gasEstimate: gasEstimate.toString(),
-      gasPrice: ethers.utils.formatUnits(gasPrice, 'gwei'),
+      gasPrice: formatUnits(gasPrice, 'gwei'),
       totalCostWei: totalCost.toString(),
-      totalCostEth: ethers.utils.formatEther(totalCost),
+      totalCostEth: formatEther(totalCost),
       success: true
     };
   } catch (error) {
@@ -227,8 +227,8 @@ export const mintNFT = async (results, archetype, userAddress, onProgress = () =
     onProgress('Estimare cost tranzacție...');
     
     // Estimate gas
-    const gasEstimate = await contract.estimateGas.mint(userAddress, svgString);
-    const gasLimit = gasEstimate.mul(120).div(100); // Add 20% buffer
+    const gasEstimate = await contract.mint.estimateGas(userAddress, svgString);
+    const gasLimit = (gasEstimate * 120n) / 100n; // Add 20% buffer
     
     onProgress('Inițiere tranzacție minting...');
     
@@ -252,7 +252,7 @@ export const mintNFT = async (results, archetype, userAddress, onProgress = () =
         try {
           // Try to parse as Transfer event
           if (log.topics.length >= 4) {
-            tokenId = ethers.BigNumber.from(log.topics[3]).toString();
+            tokenId = toBigInt(log.topics[3]).toString();
             break;
           }
         } catch (e) {
@@ -356,7 +356,7 @@ export const formatAddress = (address) => {
  */
 export const formatEthAmount = (weiAmount) => {
   try {
-    const ethAmount = ethers.utils.formatEther(weiAmount);
+    const ethAmount = formatEther(weiAmount);
     return parseFloat(ethAmount).toFixed(6);
   } catch (error) {
     return '0.000000';

@@ -3,9 +3,9 @@
  * Handles the entire NFT minting flow with user feedback
  */
 
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { AppContext } from '../../contexts/AppContext';
+import { useApp } from '../../contexts/AppContext';
 import { useWallet } from '../../hooks/useWallet';
 import { 
   mintNFT, 
@@ -15,7 +15,7 @@ import {
 } from '../../services/nftService';
 
 const NFTMintingButton = ({ results, archetype }) => {
-  const { setNotification } = useContext(AppContext);
+  const { setError, clearError } = useApp();
   const { address, isConnected, connectWallet } = useWallet();
   const [mintingState, setMintingState] = useState({
     isEstimating: false,
@@ -31,10 +31,7 @@ const NFTMintingButton = ({ results, archetype }) => {
    */
   const handleEstimateCost = async () => {
     if (!isConnected) {
-      setNotification({
-        type: 'warning',
-        message: 'Conectează-ți wallet-ul pentru a estima costul mintării'
-      });
+      setError('Conectează-ți wallet-ul pentru a estima costul mintării');
       return;
     }
 
@@ -55,10 +52,7 @@ const NFTMintingButton = ({ results, archetype }) => {
       }
     } catch (error) {
       setMintingState(prev => ({ ...prev, isEstimating: false }));
-      setNotification({
-        type: 'error',
-        message: `Eroare la estimarea costului: ${error.message}`
-      });
+      setError(`Eroare la estimarea costului: ${error.message}`);
     }
   };
 
@@ -95,27 +89,17 @@ const NFTMintingButton = ({ results, archetype }) => {
       }));
 
       if (result.success) {
-        setNotification({
-          type: 'success',
-          message: 'NFT mintat cu succes! Verifică wallet-ul tău.',
-          duration: 10000
-        });
+        clearError();
+        // Success message will be shown in the UI component itself
       } else {
-        setNotification({
-          type: 'error',
-          message: result.error,
-          duration: 8000
-        });
+        setError(result.error);
       }
     } catch (error) {
       setMintingState(prev => ({ 
         ...prev, 
         isMinting: false 
       }));
-      setNotification({
-        type: 'error',
-        message: `Eroare la mintarea NFT-ului: ${error.message}`
-      });
+      setError(`Eroare la mintarea NFT-ului: ${error.message}`);
     }
   };
 
